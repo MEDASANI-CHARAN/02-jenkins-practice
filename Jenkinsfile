@@ -8,7 +8,7 @@ pipeline {
 		}
 		stage('Jenkins'){
 			steps {
-				sh 'Am learning jenkins'
+				sh 'echo Am learning jenkins'
 			}
 		}
 		stage('K8s'){
