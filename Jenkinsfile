@@ -242,6 +242,67 @@
 
 ///// Options - disableConcurrentBuilds /////
 
+/// - Prevents Jenkins from running two builds of the same pipeline job at the same time.
+/// - If a new build is triggered while another is already running: 
+   // - The new one will wait in the queue until the running one finishes (default) 
+   // - Or, if you configure disableConcurrentBuilds(abortPrevious: true), it will stop the old one 
+   //   and  run the new one.
+
+// pipeline {
+// 	agent {
+//         label 'AGENT-1'
+//     }
+//     environment {
+//         COURSE = 'Jenkins'
+//     }
+//     options {
+//         timeout(time: 10, unit: 'MINUTES') 
+//         disableConcurrentBuilds()
+//     }
+// 	stages{
+// 		stage('Build'){
+// 			steps {
+// 				script {
+//                     sh """
+//                         echo 'Building'
+//                         sleep 10
+//                         env
+//                     """
+//                 }
+// 			}
+// 		}
+// 		stage('Test'){
+// 			steps {
+// 				script {
+//                     sh 'echo Testing'
+//                 }
+// 			}
+// 		}
+// 		stage('Deploy'){
+// 			steps {
+// 				script {
+//                     sh 'echo Deploying'
+//                 }
+// 			}
+// 		}
+// 	}
+//     post { 
+//         always { 
+//             echo 'I will always say Hello again!'
+//             deleteDir()
+//         }
+//         success { 
+//             echo 'I will always say success!'
+//         }
+//         failure { 
+//             echo 'I will always say failure!'
+//         }
+//     }
+// }
+
+
+///// Parameters /////
+
 pipeline {
 	agent {
         label 'AGENT-1'
@@ -252,6 +313,17 @@ pipeline {
     options {
         timeout(time: 10, unit: 'MINUTES') 
         disableConcurrentBuilds()
+    }
+    parameters {
+        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+
+        text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
+
+        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
+
+        choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+
+        password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
     }
 	stages{
 		stage('Build'){
@@ -279,6 +351,20 @@ pipeline {
                 }
 			}
 		}
+         stage('parameters') {
+            steps {
+                echo "Hello ${params.PERSON}"
+
+                echo "Biography: ${params.BIOGRAPHY}"
+
+                echo "Toggle: ${params.TOGGLE}"
+
+                echo "Choice: ${params.CHOICE}"
+
+                echo "Password: ${params.PASSWORD}"
+            }
+        }
+
 	}
     post { 
         always { 
