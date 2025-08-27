@@ -148,7 +148,7 @@ pipeline {
 			steps {
 				script {
                     sh """
-                        sh 'echo Building'
+                        echo 'Building'
                         env
                     """
                 }
